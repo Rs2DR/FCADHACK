@@ -1,0 +1,233 @@
+import { useState, useEffect } from 'react';
+
+import { Box, Typography, Grow, TextField, Pagination } from "@mui/material";
+
+import RegexField from '../../components/Fields/RegexField';
+import SearchField from '../../components/Fields/SearchField';
+import CardForRegex from '../../components/Cards/CardForRegex';
+
+import { SnackbarProvider, useSnackbar } from 'notistack';
+
+import { addRegex, getAllRegexes, removeRegex } from '../../Requests/ForRegex'; 
+
+import styles from './styles.module.css';
+
+function RegexPage() {
+  const [regexArray, setRegexArray] = useState([]);
+  const [newRegexName, setNewRegexName] = useState(''); 
+  const [newRegexPattern, setNewRegexPattern] = useState(''); 
+  const [searchValue, setSearchValue] = useState(''); 
+  const [currentPage, setCurrentPage] = useState(1); 
+  const itemsPerPage = 10; 
+
+  const { enqueueSnackbar } = useSnackbar();
+
+  useEffect(() => {
+    getAllRegexes()
+      .then(regexes => {
+        try {
+          const parsedData = JSON.parse(regexes);
+          setRegexArray(parsedData);
+        } catch (error) {
+          console.error("Ошибка парсинга JSON:", error);
+        }
+      })
+      .catch(err => {
+        console.error("Ошибка получения регулярных выражений:", err);
+      });
+  }, []);
+  
+
+  const handleAddRegex = async () => {
+    if (!newRegexName || !newRegexPattern) {
+      enqueueSnackbar('Имя и шаблон регулярного выражения обязательны!', { 
+        variant: 'warning', 
+        anchorOrigin: { 
+          vertical: 'bottom', 
+          horizontal: 'right' 
+        } 
+      });
+      return;
+    }
+
+    try {
+      await addRegex(newRegexName, newRegexPattern);
+      setRegexArray(prevArray => [...prevArray, { name: newRegexName, pattern: newRegexPattern }]);
+      enqueueSnackbar('Регулярное выражение успешно добавлено!', { 
+        variant: 'success', 
+        anchorOrigin: { 
+          vertical: 'bottom', 
+          horizontal: 'right' 
+        } 
+      });
+      setNewRegexName('');
+      setNewRegexPattern('');
+    } catch (err) {
+      enqueueSnackbar('Не удалось добавить регулярное выражение!', { 
+        variant: 'error', 
+        anchorOrigin: { 
+          vertical: 'bottom', 
+          horizontal: 'right' 
+        } 
+      });
+    }
+  };
+
+  const handleDelete = async (name) => {
+    try {
+      await removeRegex(name);
+      setRegexArray(prevArray => prevArray.filter(regex => regex.name !== name));
+      enqueueSnackbar('Регулярное выражение успешно удалено!', { 
+        variant: 'success', 
+        anchorOrigin: { 
+          vertical: 'bottom', 
+          horizontal: 'right' 
+        } 
+      });
+    } catch (err) {
+      enqueueSnackbar('Не удалось удалить регулярное выражение!', { 
+        variant: 'error', 
+        anchorOrigin: { 
+          vertical: 'bottom', 
+          horizontal: 'right' 
+        } 
+      });
+    }
+  };
+
+  const handleCopy = (regex) => {
+    navigator.clipboard.writeText(regex)
+      .then(() => {
+        console.log("Regex copied to clipboard:", regex);
+      })
+      .catch(err => {
+        console.error("Could not copy text: ", err);
+      });
+  };
+
+  const handleChange = (event) => {
+    setSearchValue(event.target.value);
+    setCurrentPage(1);
+  };
+
+  const handlePageChange = (_, value) => {
+    setCurrentPage(value);
+  };
+
+  const filteredRegexArray = regexArray.filter(obj => obj.name.includes(searchValue));
+  const pageCount = Math.ceil(filteredRegexArray.length / itemsPerPage);
+  const paginatedRegexArray = filteredRegexArray.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+  return (
+    <Grow in={true} timeout={1100}>
+      <Box className={styles.boxWrapper}>
+        <Grow in={true} timeout={1500}>
+          <Box>
+            <Grow in={true} timeout={2000}>
+              <Box sx={{ display: 'flex', mb: 3 }}>
+                <Typography
+                  variant="h6"
+                  component="h6"
+                  className={styles.title}>
+                  Regular expressions
+                </Typography>
+                <SearchField handleChange={handleChange} />
+              </Box>
+            </Grow>
+            <Box
+              sx={{
+                display: 'grid',
+                gridTemplateColumns: {
+                  xs: '1fr',
+                  sm: '1fr 2fr',
+                  md: '1fr 3fr'
+                },
+                gap: 2,
+                mb: 2
+              }}
+            >
+              <TextField
+                label='Name of regex'
+                value={newRegexName}
+                onChange={(e) => setNewRegexName(e.target.value)}
+                sx={{ width: 1 }}
+              />
+              <RegexField
+                text={'New regular expression'}
+                value={newRegexPattern}
+                onChange={(e) => setNewRegexPattern(e.target.value)}
+              />
+              <button onClick={handleAddRegex}>Add</button>
+            </Box>
+            <Grow in={true} timeout={2500}>
+              <Box
+                className={`${styles.box} ${styles.scrollBar}`}
+                sx={{
+                  height: {
+                    xs: '300px',
+                    sm: '500px',
+                  },
+                  backgroundColor: '#2d333b',
+                }}
+              >
+                {paginatedRegexArray.length === 0 ? (
+                  <Typography className={styles.empty}>
+                    Unfortunately empty
+                  </Typography>
+                ) : (
+                  paginatedRegexArray.map((obj, index) => (
+                    <CardForRegex 
+                      key={index} 
+                      regex={obj.pattern} 
+                      name={obj.name} 
+                      index={index}
+                      handleDelete={handleDelete}
+                      handleCopy={handleCopy} />
+                  ))
+                )}
+              </Box>
+            </Grow>
+          </Box>
+        </Grow>
+        <Grow in={true} timeout={2600} >
+          <Pagination
+            count={pageCount}
+            page={currentPage}
+            onChange={handlePageChange}
+            sx={{
+              display: 'flex',
+              justifyContent: 'center',
+              mt: 2,
+              '& .MuiPaginationItem-root': {
+                color: 'white', // Цвет текста кнопок
+                borderColor: '#86888b', // Цвет границы кнопок
+                backgroundColor: '#1a2026', // Задний фон обычных кнопок
+              },
+              '& .Mui-selected': {
+                backgroundColor: '#3a4452', // Задний фон активной кнопки
+                color: 'white', // Цвет текста активной кнопки
+                borderColor: '#2d333b', // Граница активной кнопки
+              },
+              '& .MuiPaginationItem-root:hover': {
+                borderColor: '#1976d2', // Задний фон кнопок при наведении
+              }
+            }}
+            variant="outlined"
+            shape="rounded"
+          />
+        </Grow>
+      </Box>
+    </Grow>
+  );
+}
+
+const Page = () => (
+  <SnackbarProvider maxSnack={2} autoHideDuration={1000}>
+    <RegexPage />
+  </SnackbarProvider>
+);
+
+export default Page;

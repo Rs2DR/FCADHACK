@@ -1,0 +1,24 @@
+body {
+    background-color: #0d1117;
+}
+
+.containerWrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 75vh;
+}
+
+.boxWrapper {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #86888b;
+    border-radius: 10px;
+    padding: 50px 40px;
+    min-width: 340px;
+    background-color: #151b23;
+}

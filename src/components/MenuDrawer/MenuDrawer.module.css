@@ -1,0 +1,25 @@
+.drawer {
+    width: 270px;
+    height: 100%;
+    background-color: #151b23;
+    border-right: 1px solid #86888b;
+    overflow: hidden;
+    justify-content: center;
+}
+
+.drawerCaption {
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center;
+    background-color: #0d1117;
+}
+
+.listItem {
+    margin-bottom: 1;
+    border-radius: 5px;          
+}
+
+.listItem:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white;
+}
