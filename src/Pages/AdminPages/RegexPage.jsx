@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 
 import { Box, Typography, Grow, TextField, Pagination } from "@mui/material";
 
-import RegexField from '../../components/Fields/RegexField';
+import FiledWithIcons from '../../components/Fields/FieldWithIcons';
 import SearchField from '../../components/Fields/SearchField';
 import CardForRegex from '../../components/Cards/CardForRegex';
 
@@ -155,12 +155,16 @@ function RegexPage() {
                 onChange={(e) => setNewRegexName(e.target.value)}
                 sx={{ width: 1 }}
               />
-              <RegexField
+              <FiledWithIcons
                 text={'New regular expression'}
                 value={newRegexPattern}
-                onChange={(e) => setNewRegexPattern(e.target.value)}
+                onChange={(e) => setNewRegexPattern(e.target.value)} 
+                handleAdd={handleAddRegex}
+                clear={() => {
+                  setNewRegexPattern(''); 
+                  setNewRegexName('');    
+                }}
               />
-              <button onClick={handleAddRegex}>Add</button>
             </Box>
             <Grow in={true} timeout={2500}>
               <Box

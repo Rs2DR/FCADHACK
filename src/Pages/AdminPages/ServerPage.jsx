@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import { Box, Typography, Grow, TextField, Button } from '@mui/material';
+import { Box, Typography, Grow, TextField } from '@mui/material';
 import SearchField from '../../components/Fields/SearchField';
-import RegexField from '../../components/Fields/RegexField';
+import FieldWithIcons from '../../components/Fields/FieldWithIcons';
 import CardForServer from '../../components/Cards/CardForServer';
 
 import { SnackbarProvider, useSnackbar } from 'notistack';
@@ -94,12 +94,20 @@ function ServerPage() {
       setServerArray(prev => [...prev, addedServer]);
       setNewServerName('');
       setNewServerURL('');
-      enqueueSnackbar('Сервер успешно добавлен!', {
-        variant: 'success',
+      enqueueSnackbar('Сервер успешно добавлен!', { 
+        variant: 'success', 
+        anchorOrigin: { 
+          vertical: 'bottom', 
+          horizontal: 'right' 
+        } 
       });
     } catch (error) {
-      enqueueSnackbar('Не удалось добавить сервер!', {
-        variant: 'error',
+      enqueueSnackbar('Не удалось добавить сервер!', { 
+        variant: 'error', 
+        anchorOrigin: { 
+          vertical: 'bottom', 
+          horizontal: 'right' 
+        } 
       });
     }
   };
@@ -133,14 +141,16 @@ function ServerPage() {
             onChange={(e) => setNewServerName(e.target.value)}
             sx={{ width: 1 }}
           />
-          <RegexField
+          <FieldWithIcons
             text={'URL of server'}
             value={newServerURL}
             onChange={(e) => setNewServerURL(e.target.value)}
+            handleAdd={handleAddServer}
+            clear={() => {
+              setNewServerName(''); 
+              setNewServerURL('');    
+            }}
           />
-          <Button variant="contained" onClick={handleAddServer}>
-            Добавить сервер
-          </Button>
         </Box>
         <Grow in={true} timeout={2000}>
           <Box
