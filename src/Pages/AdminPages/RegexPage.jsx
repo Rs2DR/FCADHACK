@@ -24,18 +24,17 @@ function RegexPage() {
 
   useEffect(() => {
     getAllRegexes()
-      .then(regexes => {
-        try {
-          const parsedData = JSON.parse(regexes);
-          setRegexArray(parsedData);
-        } catch (error) {
-          console.error("Ошибка парсинга JSON:", error);
-        }
-      })
-      .catch(err => {
-        console.error("Ошибка получения регулярных выражений:", err);
+      .then(regexes => {setRegexArray(regexes)})
+      .catch(() => {
+      enqueueSnackbar('Ошибка получения регулярных выражений!', { 
+          variant: 'error', 
+          anchorOrigin: { 
+            vertical: 'bottom', 
+            horizontal: 'right' 
+          } 
+        });
       });
-  }, []);
+  });
   
 
   const handleAddRegex = async () => {
@@ -171,11 +170,13 @@ function RegexPage() {
                 className={`${styles.box} ${styles.scrollBar}`}
                 sx={{
                   height: {
-                    xs: '300px',
-                    sm: '500px',
+                    xs: `calc(69vh * 0.6)`, 
+                    sm: `clamp(400px, 10vw + 45vh, 500px)`,
+                    md: `calc(100vh * 0.5)`,
                   },
                   backgroundColor: '#2d333b',
                 }}
+                
               >
                 {paginatedRegexArray.length === 0 ? (
                   <Typography className={styles.empty}>

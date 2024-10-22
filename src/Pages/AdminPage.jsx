@@ -63,7 +63,7 @@ function AdminPage({ setIsLogin, isLogin }) {
       setLoading(false);
     };
 
-    // verifyToken();
+    verifyToken();
   }, [navigate, setIsLogin]);
 
   if (loading) {

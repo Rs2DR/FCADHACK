@@ -10,6 +10,7 @@ export const getMessages = async (itemsPerPage, currentPage) => {
         pageNumber: currentPage,
       },
     });
+    sessionStorage.setItem('messagesCount', res.headers.total);
     return res.data;
   } catch (err) {
     console.error(err);

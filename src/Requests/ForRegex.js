@@ -4,7 +4,8 @@ const baseURL = process.env.REACT_APP_BASE_URL;
 
 export const addRegex = async (name, pattern) => {
   try {
-    const res = await axios.post(`${baseURL}/api/regex/add`, JSON.stringify({ name, pattern }));
+    console.log({ name, pattern });
+    const res = await axios.post(`${baseURL}/api/regex/add`, { name, pattern });
     return res.data;
   } catch (err) {
     console.error(err);
