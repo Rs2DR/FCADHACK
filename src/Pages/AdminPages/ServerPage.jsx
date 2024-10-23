@@ -88,12 +88,12 @@ function ServerPage() {
 
   // Добавление нового сервера
   const handleAddServer = async () => {
-    const newServer = { name: newServerName, url: newServerURL };
+    const newServer = { id: 0, name: newServerName, url: newServerURL };
     try {
       const isAdded = await addServer(newServer);
       if (isAdded) {
         // Если сервер успешно добавлен, добавляем его в список
-        setServerArray(prev => [...prev, { ...newServer, id: Date.now(), working: false }]); 
+        setServerArray(prev => [...prev, { ...newServer, working: false }]); 
         setNewServerName('');
         setNewServerURL('');
         enqueueSnackbar('Сервер успешно добавлен!', { 
