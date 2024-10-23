@@ -16,7 +16,7 @@ function RegexPage() {
   const [regexArray, setRegexArray] = useState([]);
   const [newRegexName, setNewRegexName] = useState(''); 
   const [newRegexPattern, setNewRegexPattern] = useState(''); 
-  const [searchValue, setSearchValue] = useState(''); 
+  // const [searchValue, setSearchValue] = useState(''); 
   const [currentPage, setCurrentPage] = useState(1); 
   const itemsPerPage = 10; 
 
@@ -34,7 +34,7 @@ function RegexPage() {
           } 
         });
       });
-  });
+  }, [enqueueSnackbar]);
   
 
   const handleAddRegex = async () => {
@@ -105,7 +105,7 @@ function RegexPage() {
   };
 
   const handleChange = (event) => {
-    setSearchValue(event.target.value);
+    // setSearchValue(event.target.value);
     setCurrentPage(1);
   };
 
@@ -113,9 +113,7 @@ function RegexPage() {
     setCurrentPage(value);
   };
 
-  const filteredRegexArray = regexArray.filter(obj => obj.name.includes(searchValue));
-  const pageCount = Math.ceil(filteredRegexArray.length / itemsPerPage);
-  const paginatedRegexArray = filteredRegexArray.slice(
+  const paginatedRegexArray = regexArray.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
@@ -199,8 +197,10 @@ function RegexPage() {
         </Grow>
         <Grow in={true} timeout={2600} >
           <Pagination
-            count={pageCount}
+            count={99999}
             page={currentPage}
+            boundaryCount={0}
+            siblingCount={3}
             onChange={handlePageChange}
             sx={{
               display: 'flex',

@@ -5,6 +5,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import DisabledByDefaultRoundedIcon from '@mui/icons-material/DisabledByDefaultRounded';
 import AbcRoundedIcon from '@mui/icons-material/AbcRounded';
 import EmailRoundedIcon from '@mui/icons-material/EmailRounded';
+import StorageRoundedIcon from '@mui/icons-material/StorageRounded';
 import SettingsSuggestRoundedIcon from '@mui/icons-material/SettingsSuggestRounded';
 
 import styles from './MenuDrawer.module.css';
@@ -21,6 +22,11 @@ function MenuDrawer({ open, toggleDrawer }) {
         text:'Filtered messages',
         icon: <EmailRoundedIcon sx={{ color: 'white' }} fontSize='large'/>,
         path: 'filtered-messages',
+      },
+      {
+        text:'Servers',
+        icon: <StorageRoundedIcon sx={{ color: 'white' }} fontSize='large'/>,
+        path: 'serves',
       },
       {
         text:'Settings',

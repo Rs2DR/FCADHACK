@@ -25,6 +25,7 @@ function RegexPage() {
       } else if (fetchedSettings.blockSensitiveMessages) {
         setSelectedValue('blockSensitiveMessages');
       }
+      console.log(fetchedSettings);
     });
   }, []);
 
@@ -63,9 +64,9 @@ function RegexPage() {
   };
 
   const descriptions = {
-    removeSensitiveFields: 'Описание для удаления полей.',
-    blockSensitiveMessages: 'Описание для блокировки сообщений.',
-    maskSensitiveMessages: 'Описание для маскировки сообщений.',
+    removeSensitiveFields: 'Данная настройка будет удалять поля в сообщении с чувствительными и персональными данными',
+    blockSensitiveMessages: 'Данная настройка отключает отправку сообщений, в которых есть чувствительные и персональные данные',
+    maskSensitiveMessages: 'Данная настройка будет заменять чувствительные и персональные данные на  маскировочный символ. Пример: "Моя почта email@gmai.com". При использовании маскировочного символа "###" станет: "Моя ###"',
   };
 
   return (

@@ -1,7 +1,7 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState } from "react";
 
 import { Box, Typography, Grow, Pagination } from "@mui/material";
-import SearchField from "../../components/Fields/SearchField";
+import SearchMessages from "../../components/Fields/SearchMessages";
 import CardForMessage from "../../components/Cards/CardForMessage";
 
 import { deleteMessage, getMessages } from "../../Requests/ForMessage";
@@ -11,140 +11,26 @@ import { SnackbarProvider, useSnackbar } from 'notistack';
 import styles from './styles.module.css';
 
 function MessagePage() {
-  const [messages, setMessages] = useState([{
-    "отправитель": "Алексей",
-    "время": "2024-10-22 10:00",
-    "сообщение": "Привет! Как твои дела?"
-  },
-  {
-    "отправитель": "Мария",
-    "время": "2024-10-22 10:02",
-    "сообщение": "Привет! Всё хорошо, а у тебя?"
-  },
-  {
-    "отправитель": "Алексей",
-    "время": "2024-10-22 10:03",
-    "сообщение": "Тоже всё нормально, на работе как обычно. Какие планы на вечер?"
-  },
-  {
-    "отправитель": "Мария",
-    "время": "2024-10-22 10:05",
-    "сообщение": "Пока ничего не планировала. Может, встретимся?"
-  },
-  {
-    "отправитель": "Алексей",
-    "время": "2024-10-22 10:06",
-    "сообщение": "Отличная идея! Давай выберем место. Куда пойдём?"
-  },{
-    "отправитель": "Алексей",
-    "время": "2024-10-22 10:00",
-    "сообщение": "Привет! Как твои дела?"
-  },
-  {
-    "отправитель": "Мария",
-    "время": "2024-10-22 10:02",
-    "сообщение": "Привет! Всё хорошо, а у тебя?"
-  },
-  {
-    "отправитель": "Алексей",
-    "время": "2024-10-22 10:03",
-    "сообщение": "Тоже всё нормально, на работе как обычно. Какие планы на вечер?"
-  },
-  {
-    "отправитель": "Мария",
-    "время": "2024-10-22 10:05",
-    "сообщение": "Пока ничего не планировала. Может, встретимся?"
-  },
-  {
-    "отправитель": "Алексей",
-    "время": "2024-10-22 10:06",
-    "сообщение": "Отличная идея! Давай выберем место. Куда пойдём?"
-  },{
-    "отправитель": "Алексей",
-    "время": "2024-10-22 10:00",
-    "сообщение": "Привет! Как твои дела?"
-  },
-  {
-    "отправитель": "Мария",
-    "время": "2024-10-22 10:02",
-    "сообщение": "Привет! Всё хорошо, а у тебя?"
-  },
-  {
-    "отправитель": "Алексей",
-    "время": "2024-10-22 10:03",
-    "сообщение": "Тоже всё нормально, на работе как обычно. Какие планы на вечер?"
-  },
-  {
-    "отправитель": "Мария",
-    "время": "2024-10-22 10:05",
-    "сообщение": "Пока ничего не планировала. Может, встретимся?"
-  },
-  {
-    "отправитель": "Алексей",
-    "время": "2024-10-22 10:06",
-    "сообщение": "Отличная идея! Давай выберем место. Куда пойдём?"
-  },{
-    "отправитель": "Алексей",
-    "время": "2024-10-22 10:00",
-    "сообщение": "Привет! Как твои дела?"
-  },
-  {
-    "отправитель": "Мария",
-    "время": "2024-10-22 10:02",
-    "сообщение": "Привет! Всё хорошо, а у тебя?"
-  },
-  {
-    "отправитель": "Алексей",
-    "время": "2024-10-22 10:03",
-    "сообщение": "Тоже всё нормально, на работе как обычно. Какие планы на вечер?"
-  },
-  {
-    "отправитель": "Мария",
-    "время": "2024-10-22 10:05",
-    "сообщение": "Пока ничего не планировала. Может, встретимся?"
-  },
-  {
-    "отправитель": "Алексей",
-    "время": "2024-10-22 10:06",
-    "сообщение": "Отличная идея! Давай выберем место. Куда пойдём?"
-  },{
-    "отправитель": "Алексей",
-    "время": "2024-10-22 10:00",
-    "сообщение": "Привет! Как твои дела?"
-  },
-  {
-    "отправитель": "Мария",
-    "время": "2024-10-22 10:02",
-    "сообщение": "Привет! Всё хорошо, а у тебя?"
-  },
-  {
-    "отправитель": "Алексей",
-    "время": "2024-10-22 10:03",
-    "сообщение": "Тоже всё нормально, на работе как обычно. Какие планы на вечер?"
-  },
-  {
-    "отправитель": "Мария",
-    "время": "2024-10-22 10:05",
-    "сообщение": "Пока ничего не планировала. Может, встретимся?"
-  },
-  {
-    "отправитель": "Алексей",
-    "время": "2024-10-22 10:06",
-    "сообщение": "Отличная идея! Давай выберем место. Куда пойдём?"
-  },]);
-
+  const [messages, setMessages] = useState([]);
   const [searchValue, setSearchValue] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
   const { enqueueSnackbar } = useSnackbar();
 
   useEffect(() => {
-    getMessages(itemsPerPage, currentPage)
+    getMessages(itemsPerPage, currentPage, searchValue)
     .then(messages => setMessages(messages))
     .catch(err => {
       console.error("Ошибка получения сообщений:", err);
+      enqueueSnackbar(`Ошибка получения сообщений!`, { 
+        variant: 'error', 
+        anchorOrigin: { 
+          vertical: 'bottom', 
+          horizontal: 'right' 
+        } 
+      });
     });
-  }, [currentPage])
+  }, [currentPage, enqueueSnackbar, searchValue]);
 
   const handleDelete = async (id) => {
     try {
@@ -178,29 +64,6 @@ function MessagePage() {
       });
   };
 
-  const handleChange = (event) => {
-    setSearchValue(event.target.value);
-    setCurrentPage(1);
-  };
-
-  const filteredMessages = useMemo(() => {
-    return messages.filter(message => 
-      Object.keys(message).some(key =>
-        String(message[key]).toLowerCase().includes(searchValue.toLowerCase())
-      )
-    );
-  }, [messages, searchValue]);
-  
-  const pageCount = Math.ceil(sessionStorage.getItem('messagesCount') / itemsPerPage);
-  const paginatedMessages = filteredMessages.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
-
-  const handlePageChange = (_, value) => {
-    setCurrentPage(value);
-  };
-
   return (
     <Grow in={true} timeout={1100}>
       <Box className={styles.boxWrapper}>
@@ -212,7 +75,7 @@ function MessagePage() {
               className={styles.title}>
               Filtered messages
             </Typography>
-            <SearchField handleChange={handleChange} />
+            <SearchMessages setSearchValue={setSearchValue} setCurrentPage={setCurrentPage}/>
           </Box>
         </Grow>
         <Grow in={true} timeout={2500}>
@@ -231,12 +94,12 @@ function MessagePage() {
               }
             }}
           >
-            {paginatedMessages.length === 0 ? (
+            {messages.length === 0 ? (
               <Typography className={styles.empty}>
               Unfortunately empty
             </Typography>
             ) : (
-              paginatedMessages.map((message) => (
+              messages.map((message) => (
                 <CardForMessage 
                   key={message._id?.$oid || message._id}
                   message={message}
@@ -248,9 +111,10 @@ function MessagePage() {
         </Grow>
         <Grow in={true} timeout={2600} >
         <Pagination
-          count={pageCount}
+          count={999999}
+          boundaryCount={0}
+          siblingCount={4}
           page={currentPage}
-          onChange={handlePageChange}
           sx={{
             display: 'flex',
             justifyContent: 'center',

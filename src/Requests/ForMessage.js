@@ -2,15 +2,15 @@ import axios from 'axios';
 
 const baseURL = process.env.REACT_APP_BASE_URL;
 
-export const getMessages = async (itemsPerPage, currentPage) => {
+export const getMessages = async (itemsPerPage, currentPage, searchValue) => {
   try {
     const res = await axios.get(`${baseURL}/api/messages`, {
       params: {
         pageSize: itemsPerPage,
         pageNumber: currentPage,
+        searchString: searchValue,
       },
     });
-    sessionStorage.setItem('messagesCount', res.headers.total);
     return res.data;
   } catch (err) {
     console.error(err);
