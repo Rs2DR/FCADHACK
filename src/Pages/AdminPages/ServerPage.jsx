@@ -58,11 +58,9 @@ function ServerPage() {
     };
 
     if (serverArray.length > 0) {
-      checkServerStatus(); // Только если серверы есть
+      checkServerStatus(); 
     }
-  }, [serverArray, enqueueSnackbar]); // Включаем enqueueSnackbar как зависимость
-
-  // Удаление сервера
+  }, [serverArray, enqueueSnackbar]);
   const handleDelete = async (id) => {
     try {
       await deleteServer(id);
@@ -86,13 +84,11 @@ function ServerPage() {
     }
   };
 
-  // Добавление нового сервера
   const handleAddServer = async () => {
     const newServer = { id: 0, name: newServerName, url: newServerURL };
     try {
       const isAdded = await addServer(newServer);
       if (isAdded) {
-        // Если сервер успешно добавлен, добавляем его в список
         setServerArray(prev => [...prev, { ...newServer, working: false }]); 
         setNewServerName('');
         setNewServerURL('');
@@ -115,7 +111,6 @@ function ServerPage() {
     }
   };
 
-  // Фильтрация серверов по поисковому запросу
   const filteredServers = serverArray.filter(server =>
     server.name.toLowerCase().includes(searchValue.toLowerCase())
   );

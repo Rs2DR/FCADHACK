@@ -8,7 +8,7 @@ export const getMessages = async (itemsPerPage, currentPage, searchValue) => {
       params: {
         pageSize: itemsPerPage,
         pageNumber: currentPage,
-        searchString: searchValue,
+        ...(searchValue && { searchString: searchValue }), // Условное добавление параметра
       },
     });
     return res.data;
