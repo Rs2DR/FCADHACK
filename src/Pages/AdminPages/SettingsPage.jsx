@@ -10,7 +10,7 @@ import { getSettings, updateSettings } from "../../Requests/ForSettings";
 import styles from './styles.module.css';
 
 function RegexPage() {
-  const { register, handleSubmit } = useForm(); 
+  const { register, handleSubmit, setValue } = useForm(); 
   const [selectedValue, setSelectedValue] = useState('removeSensitiveFields');
   const [settings, setSettings] = useState({}); 
   const { enqueueSnackbar } = useSnackbar(); 
@@ -25,9 +25,9 @@ function RegexPage() {
       } else if (fetchedSettings.blockSensitiveMessages) {
         setSelectedValue('blockSensitiveMessages');
       }
-      console.log(fetchedSettings);
+      setValue('maskingSymbols', fetchedSettings.maskingSymbols)
     });
-  }, []);
+  });
 
   const handleRadioChange = (event) => {
     setSelectedValue(event.target.value); 
@@ -43,7 +43,6 @@ function RegexPage() {
         saveSensitiveEmail: data.saveSensitiveEmail,
       };
 
-      console.log(result); 
       await updateSettings(result); 
       enqueueSnackbar(`Настройки успешно сохранены!`, { 
         variant: 'success',
@@ -95,7 +94,7 @@ function RegexPage() {
                 sx={{ width: 1 }}
                 variant='outlined'
                 label='Masking Symbols'
-                defaultValue={settings.maskingSymbols}
+                value={settings.maskingSymbols}
                 {...register('maskingSymbols', { required: "Это поле обязательно" })}
               />
             </Box>

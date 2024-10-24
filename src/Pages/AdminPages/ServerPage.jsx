@@ -8,18 +8,20 @@ import { getAllServers, addServer, deleteServer, pingServer } from '../../Reques
 import styles from './styles.module.css';
 
 function ServerPage() {
-  const [serverArray, setServerArray] = useState([]);
+  const [servArray, setServArray] = useState([]);
   const [searchValue, setSearchValue] = useState('');
-  const [newServerName, setNewServerName] = useState('');
-  const [newServerURL, setNewServerURL] = useState('');
+  const [newServerName, setNewServName] = useState('');
+  const [newServerURL, setNewServURL] = useState('');
   const { enqueueSnackbar } = useSnackbar();
 
   // Загрузка всех серверов при первом рендере
   useEffect(() => {
-    const fetchServers = async () => {
+    const fetchServs = async () => {
       try {
-        const servers = await getAllServers();
-        setServerArray(servers);
+        const servs = await getAllServers();
+        setServArray(servs);
+        // После загрузки серверов запускаем проверку их статусов
+        checkServerStatus(servs);
       } catch (err) {
         enqueueSnackbar('Ошибка загрузки серверов!', { 
           variant: 'error', 
@@ -31,41 +33,36 @@ function ServerPage() {
       }
     };
 
-    fetchServers();
+    fetchServs();
   }, [enqueueSnackbar]);
 
-  // Проверка статуса серверов (запускаем при первой загрузке и при обновлении serverArray)
-  useEffect(() => {
-    const checkServerStatus = async () => {
-      console.log(serverArray);
-      try {
-        const updatedServers = await Promise.all(
-          serverArray.map(async (server) => {
-            const response = await pingServer(server.url); 
-            return { ...server, working: response === true }; 
-          })
-        );
-        setServerArray(updatedServers);
-      } catch (err) {
-        enqueueSnackbar('Ошибка проверки статуса серверов!', { 
-          variant: 'error', 
-          anchorOrigin: { 
-            vertical: 'bottom', 
-            horizontal: 'right' 
-          } 
-        });
-      }
-    };
+  const checkServerStatus = async (servers) => {
+    try {
+      const updatedServs = [];
 
-    if (serverArray.length > 0) {
-      checkServerStatus(); 
+      // Проверяем каждый сервер по очереди
+      for (let serv of servers) {
+        const response = await pingServer(serv.url);
+        updatedServs.push({ ...serv, working: response === true });
+      }
+
+      setServArray(updatedServs);
+    } catch (err) {
+      enqueueSnackbar('Ошибка проверки статуса серверов!', { 
+        variant: 'error', 
+        anchorOrigin: { 
+          vertical: 'bottom', 
+          horizontal: 'right' 
+        } 
+      });
     }
-  }, [serverArray, enqueueSnackbar]);
+  };
+
   const handleDelete = async (id) => {
     try {
       await deleteServer(id);
-      const newServerArray = serverArray.filter(server => server.id !== id);
-      setServerArray(newServerArray);
+      const newServerArray = servArray.filter(serv => serv.id !== id);
+      setServArray(newServerArray);
       enqueueSnackbar('Сервер успешно удален из списка!', { 
         variant: 'success', 
         anchorOrigin: { 
@@ -85,13 +82,16 @@ function ServerPage() {
   };
 
   const handleAddServer = async () => {
+    if(newServerName && newServerURL) {
     const newServer = { id: 0, name: newServerName, url: newServerURL };
     try {
       const isAdded = await addServer(newServer);
       if (isAdded) {
-        setServerArray(prev => [...prev, { ...newServer, working: false }]); 
-        setNewServerName('');
-        setNewServerURL('');
+        const updatedServerArray = [...servArray, { ...newServer, working: false }];
+        setServArray(updatedServerArray);
+        checkServerStatus(updatedServerArray);
+        setNewServName('');
+        setNewServURL('');
         enqueueSnackbar('Сервер успешно добавлен!', { 
           variant: 'success', 
           anchorOrigin: { 
@@ -109,10 +109,20 @@ function ServerPage() {
         } 
       });
     }
-  };
+  } else {
+    enqueueSnackbar('Имя!', { 
+      variant: 'warning', 
+      anchorOrigin: { 
+        vertical: 'bottom', 
+        horizontal: 'right' 
+      } 
+    });
+  }
+  }
+  ;
 
-  const filteredServers = serverArray.filter(server =>
-    server.name.toLowerCase().includes(searchValue.toLowerCase())
+  const filteredServers = servArray.filter(serv =>
+    serv.name.toLowerCase().includes(searchValue.toLowerCase())
   );
 
   return (
@@ -137,17 +147,17 @@ function ServerPage() {
           <TextField
             label='Name'
             value={newServerName}
-            onChange={(e) => setNewServerName(e.target.value)}
+            onChange={(e) => setNewServName(e.target.value)}
             sx={{ width: 1 }}
           />
           <FieldWithIcons
             text={'URL of server'}
             value={newServerURL}
-            onChange={(e) => setNewServerURL(e.target.value)}
+            onChange={(e) => setNewServURL(e.target.value)}
             handleAdd={handleAddServer}
             clear={() => {
-              setNewServerName(''); 
-              setNewServerURL('');    
+              setNewServName(''); 
+              setNewServURL('');    
             }}
           />
         </Box>
@@ -164,12 +174,12 @@ function ServerPage() {
                 Unfortunately empty
               </Typography>
             ) : (
-              filteredServers.map(server => (
+              filteredServers.map(serv => (
                 <CardForServer
-                  key={server.id}
-                  name={server.name}
-                  working={server.working} // Используем обновленное состояние
-                  id={server.id}
+                  key={serv.id}
+                  name={serv.name}
+                  working={serv.working} 
+                  id={serv.id}
                   handleDelete={handleDelete}
                 />
               ))

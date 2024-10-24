@@ -56,12 +56,6 @@ function MessagePage() {
 
   const handleCopy = (jsonObject) => {
     navigator.clipboard.writeText(JSON.stringify(jsonObject, null, 2))
-      .then(() => {
-        console.log("JSON copied to clipboard:", jsonObject);
-      })
-      .catch(err => {
-        console.error("Could not copy text: ", err);
-      });
   };
 
   return (

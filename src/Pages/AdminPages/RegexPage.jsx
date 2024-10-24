@@ -16,7 +16,7 @@ function RegexPage() {
   const [regexArray, setRegexArray] = useState([]);
   const [newRegexName, setNewRegexName] = useState(''); 
   const [newRegexPattern, setNewRegexPattern] = useState(''); 
-  // const [searchValue, setSearchValue] = useState(''); 
+  const [searchValue, setSearchValue] = useState(''); 
   const [currentPage, setCurrentPage] = useState(1); 
   const itemsPerPage = 10; 
 
@@ -96,16 +96,10 @@ function RegexPage() {
 
   const handleCopy = (regex) => {
     navigator.clipboard.writeText(regex)
-      .then(() => {
-        console.log("Regex copied to clipboard:", regex);
-      })
-      .catch(err => {
-        console.error("Could not copy text: ", err);
-      });
   };
 
   const handleChange = (event) => {
-    // setSearchValue(event.target.value);
+    setSearchValue(event.target.value);
     setCurrentPage(1);
   };
 
@@ -113,7 +107,12 @@ function RegexPage() {
     setCurrentPage(value);
   };
 
-  const paginatedRegexArray = regexArray.slice(
+  const filteredRegexArray = regexArray.filter((regex) =>
+    regex.name.toLowerCase().includes(searchValue.toLocaleLowerCase()) ||
+    regex.pattern.toLowerCase().includes(searchValue)
+  );
+
+  const paginatedRegexArray = filteredRegexArray.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
