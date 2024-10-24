@@ -54,13 +54,25 @@ function AdminPage({ setIsLogin, isLogin }) {
 
   useEffect(() => {
     const verifyToken = async () => {
-      const isValid = await checkToken(localStorage.getItem('token'));
-      if (!isValid) {
+      try {
+        const token = localStorage.getItem('token');
+        if (!token) {
+          navigate('/auth/login');
+          return;
+        }
+
+        const isValid = await checkToken(token);
+        if (!isValid) {
+          navigate('/auth/login');
+        } else {
+          setIsLogin(true);
+        }
+      } catch (error) {
+        console.error("Ошибка при проверке токена:", error);
         navigate('/auth/login');
-      } else {
-        setIsLogin(true);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
 
     verifyToken();

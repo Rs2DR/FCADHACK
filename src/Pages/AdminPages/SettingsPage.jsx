@@ -18,6 +18,7 @@ function RegexPage() {
   useEffect(() => {
     getSettings().then(fetchedSettings => {
       setSettings(fetchedSettings);
+      setValue('maskingSymbols', fetchedSettings.maskingSymbols)
       if (fetchedSettings.maskSensitiveMessages) {
         setSelectedValue('maskSensitiveMessages');
       } else if (fetchedSettings.removeSensitiveFields) {
@@ -25,9 +26,8 @@ function RegexPage() {
       } else if (fetchedSettings.blockSensitiveMessages) {
         setSelectedValue('blockSensitiveMessages');
       }
-      setValue('maskingSymbols', fetchedSettings.maskingSymbols)
     });
-  });
+  }, []);
 
   const handleRadioChange = (event) => {
     setSelectedValue(event.target.value); 
@@ -43,6 +43,7 @@ function RegexPage() {
         saveSensitiveEmail: data.saveSensitiveEmail,
       };
 
+      console.debug(result);
       await updateSettings(result); 
       enqueueSnackbar(`Настройки успешно сохранены!`, { 
         variant: 'success',
@@ -94,7 +95,7 @@ function RegexPage() {
                 sx={{ width: 1 }}
                 variant='outlined'
                 label='Masking Symbols'
-                value={settings.maskingSymbols}
+                defaultValue='???'
                 {...register('maskingSymbols', { required: "Это поле обязательно" })}
               />
             </Box>

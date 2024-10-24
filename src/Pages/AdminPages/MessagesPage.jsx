@@ -58,6 +58,10 @@ function MessagePage() {
     navigator.clipboard.writeText(JSON.stringify(jsonObject, null, 2))
   };
 
+  const handlePageChange = (_, page) => {
+    setCurrentPage(page); 
+  };
+
   return (
     <Grow in={true} timeout={1100}>
       <Box className={styles.boxWrapper}>
@@ -109,6 +113,7 @@ function MessagePage() {
           boundaryCount={0}
           siblingCount={4}
           page={currentPage}
+          onChange={handlePageChange}
           sx={{
             display: 'flex',
             justifyContent: 'center',

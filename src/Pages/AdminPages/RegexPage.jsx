@@ -24,7 +24,13 @@ function RegexPage() {
 
   useEffect(() => {
     getAllRegexes()
-      .then(regexes => {setRegexArray(regexes)})
+    .then(regexes => {
+      const splitedRegexes = regexes.map(item => {
+        const [name, pattern] = item.split(":");
+        return { name, pattern };
+      });
+      setRegexArray(splitedRegexes); 
+    })
       .catch(() => {
       enqueueSnackbar('Ошибка получения регулярных выражений!', { 
           variant: 'error', 

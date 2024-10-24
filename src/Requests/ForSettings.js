@@ -4,7 +4,7 @@ const baseURL = process.env.REACT_APP_BASE_URL;
 
 export const updateSettings = async (settings) => {
   try {
-    const res = await axios.post(`${baseURL}api/settings/update`, settings);
+    const res = await axios.post(`${baseURL}/api/settings/update`, settings);
     return res.status === 200;
   } catch (err) {
     console.error(err);
